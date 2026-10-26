@@ -1,0 +1,11 @@
+# ignore build output and dependencies
+node_modules/
+dist/
+dist-demo/
+*.log
+.env
+.env.*
+!.env.example
+!web/.env.mock
+.DS_Store
+.vercel
