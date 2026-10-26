@@ -1,0 +1,35 @@
+{
+  "name": "tiktok-cheo-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "migrate": "node dist/migrate.js",
+    "start:api": "node dist/server.js",
+    "start:worker": "node dist/worker.js",
+    "loadtest": "node dist/scripts/loadtest.js"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/cors": "^10.0.2",
+    "@fastify/rate-limit": "^10.2.2",
+    "@socket.io/redis-adapter": "^8.3.0",
+    "@socket.io/redis-emitter": "^5.1.0",
+    "bullmq": "^5.34.0",
+    "cookie": "^1.0.2",
+    "fastify": "^5.2.1",
+    "ioredis": "^5.4.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.1",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^22.10.5",
+    "@types/pg": "^8.11.10",
+    "socket.io-client": "^4.8.1",
+    "typescript": "^5.7.3"
+  }
+}

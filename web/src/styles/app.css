@@ -1,0 +1,1418 @@
+/* ============================================================
+   Chéo — hệ thống giao diện "Duet"
+   Bạn = xanh, đối phương = hồng. Hai nửa khép lại = "Bạn bè".
+   ============================================================ */
+
+:root {
+  --cloud: #eef1f8;
+  --paper: #ffffff;
+  --ink: #191b3a;
+  --ink-2: #4a4e73;
+  --ink-3: #7a7fa3;
+  --line: #d9deec;
+  --you: #3550ff;
+  --you-deep: #2236d1;
+  --you-soft: #e0e5ff;
+  --them: #ff4f8b;
+  --them-deep: #e0336f;
+  --them-soft: #ffe2ec;
+  --moss: #0e9f7a;
+  --amber: #c97a0c;
+  --danger: #d93d4a;
+  --mute: #c4c8da;
+
+  --display: 'Bricolage Grotesque Variable', 'Be Vietnam Pro', system-ui, sans-serif;
+  --body: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --r-stage: 32px;
+  --r-block: 20px;
+  --r-small: 12px;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --tabbar-h: 0px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--cloud);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 88;
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--you);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+.pos {
+  color: var(--moss);
+}
+.neg {
+  color: var(--danger);
+}
+
+/* ---------- logo ---------- */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+}
+.logo__word {
+  font-family: var(--display);
+  font-weight: 800;
+  font-variation-settings: 'wdth' 80;
+  font-size: 1.45em;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 16px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s, transform 0.1s;
+  white-space: nowrap;
+}
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+.btn--lg {
+  min-height: 56px;
+  padding: 0 30px;
+  font-size: 17px;
+}
+.btn--sm {
+  min-height: 40px;
+  padding: 0 18px;
+  font-size: 15px;
+}
+.btn--you {
+  background: var(--you);
+  color: #fff;
+}
+.btn--you:hover:not(:disabled) {
+  background: var(--you-deep);
+}
+.btn--them {
+  background: var(--them);
+  color: #fff;
+}
+.btn--them:hover:not(:disabled) {
+  background: var(--them-deep);
+}
+.btn--ink {
+  background: var(--ink);
+  color: #fff;
+}
+.btn--ink:hover {
+  background: #2c2f5c;
+}
+.btn--ghost {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--mute);
+}
+.btn--ghost:hover {
+  box-shadow: inset 0 0 0 1.5px var(--ink);
+}
+
+.linklike {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin-left: 8px;
+  color: var(--you);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---------- avatar ---------- */
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  border-radius: 50%;
+  overflow: hidden;
+  font-family: var(--display);
+  font-weight: 700;
+  font-variation-settings: 'wdth' 85;
+  letter-spacing: -0.02em;
+}
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.avatar--you {
+  background: var(--you-soft);
+  color: var(--you-deep);
+}
+.avatar--them {
+  background: var(--them-soft);
+  color: var(--them-deep);
+}
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+.shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  height: 68px;
+  padding: 0 clamp(16px, 3vw, 32px);
+  background: color-mix(in srgb, var(--cloud) 88%, transparent);
+  backdrop-filter: blur(12px);
+}
+.topbar__brand {
+  text-decoration: none;
+}
+.topbar__nav {
+  display: flex;
+  gap: 4px;
+}
+.topbar__link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  color: var(--ink-2);
+  font-weight: 500;
+  text-decoration: none;
+}
+.topbar__link:hover {
+  color: var(--ink);
+  background: rgba(25, 27, 58, 0.05);
+}
+.topbar__link.active {
+  color: #fff;
+  background: var(--ink);
+}
+.topbar__me {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--ink-2);
+  font-size: 14px;
+}
+.topbar__score b {
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink);
+  margin-right: 2px;
+}
+
+.badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: var(--them);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.shell__main {
+  flex: 1;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 12px clamp(16px, 3vw, 32px) calc(40px + var(--tabbar-h));
+}
+
+.tabbar {
+  display: none;
+}
+
+.page-loading {
+  padding: 48px 0;
+  color: var(--ink-3);
+}
+
+/* ============================================================
+   STAGE — sân duet
+   ============================================================ */
+.zone {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.stage {
+  --seam: 104px;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr var(--seam) 1fr;
+  min-height: min(56vh, 480px);
+  transition: grid-template-columns 0.7s var(--ease);
+}
+
+.half {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  min-width: 0;
+  border-radius: var(--r-stage);
+  transition: background-color 0.45s, color 0.45s, border-radius 0.7s var(--ease), box-shadow 0.45s;
+}
+.half--you {
+  background: var(--you);
+  color: #fff;
+}
+.half--them {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--them) 40%, transparent);
+  color: var(--ink);
+}
+
+.seam {
+  display: grid;
+  place-items: center;
+  z-index: 2;
+}
+
+/* đã có người ghép: nửa hồng sáng lên */
+.stage--matched .half--them,
+.stage--result-ok .half--them,
+.stage--result-partial .half--them,
+.stage--result-failed .half--them {
+  background: var(--them);
+  color: #fff;
+  box-shadow: none;
+}
+
+/* KHOẢNH KHẮC CHÍNH: hai nửa khép lại thành "Bạn bè" */
+.stage--result-ok {
+  --seam: 0px;
+}
+.stage--result-ok .half--you {
+  border-radius: var(--r-stage) 0 0 var(--r-stage);
+}
+.stage--result-ok .half--them {
+  border-radius: 0 var(--r-stage) var(--r-stage) 0;
+}
+/* khe vẫn nằm trong lưới (rộng 0) để hai nửa giữ đúng cột; nhãn nổi ở chính giữa */
+.seam {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+}
+
+.friends {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 20px;
+  font-variation-settings: 'wdth' 85;
+  box-shadow: 0 10px 30px rgba(25, 27, 58, 0.25);
+  animation: friends-in 0.5s 0.45s var(--ease) both;
+}
+@keyframes friends-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.6);
+  }
+}
+
+/* bên nào không follow thì nửa đó tắt màu */
+.stage--you-no .half--you,
+.stage--them-no .half--them {
+  background: var(--mute);
+  color: var(--ink);
+}
+.stage--result-expired .half--you {
+  background: var(--mute);
+  color: var(--ink);
+}
+
+/* người trong mỗi nửa */
+.person {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+  min-width: 0;
+  max-width: 100%;
+}
+.person .avatar {
+  margin-bottom: 10px;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.35);
+}
+.person__name {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-variation-settings: 'wdth' 85;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+.person__handle {
+  font-size: 15px;
+  opacity: 0.85;
+  overflow-wrap: anywhere;
+}
+.person__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+.person__status {
+  margin-top: 14px;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.tier {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 13px;
+  font-weight: 600;
+}
+.half--them:not(:has(.person)) .tier {
+  background: var(--paper);
+}
+.flag {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #fff3df;
+  color: #8a4f00;
+  font-size: 13px;
+  font-weight: 700;
+}
+.flag--block {
+  display: block;
+  height: auto;
+  padding: 8px 12px;
+  margin-top: 12px;
+  border-radius: var(--r-small);
+}
+
+.waiting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-width: 26ch;
+  text-align: center;
+  color: var(--ink-2);
+}
+.waiting__pulse {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid var(--them);
+  animation: pulse 1.6s var(--ease) infinite;
+}
+@keyframes pulse {
+  0% {
+    transform: scale(0.75);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.25);
+    opacity: 0;
+  }
+}
+
+/* vòng đếm ngược nằm giữa đường nối */
+.countdown {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: 0 6px 20px rgba(25, 27, 58, 0.12);
+}
+.countdown svg {
+  position: absolute;
+  inset: 6px;
+  transform: rotate(-90deg);
+}
+.countdown circle {
+  fill: none;
+  stroke-width: 5;
+}
+.countdown__bg {
+  stroke: var(--cloud);
+}
+.countdown__fg {
+  stroke: var(--ink);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.25s linear;
+}
+.countdown span {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 22px;
+  font-variation-settings: 'wdth' 80;
+  font-variant-numeric: tabular-nums;
+}
+.countdown--low .countdown__fg {
+  stroke: var(--danger);
+}
+.countdown--low span {
+  color: var(--danger);
+}
+
+/* ---------- điều khiển dưới sân ---------- */
+.controls {
+  display: flex;
+  justify-content: center;
+  min-height: 56px;
+}
+
+.steps {
+  list-style: none;
+  counter-reset: step;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 40px;
+  width: 100%;
+  max-width: 820px;
+}
+.steps li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 4px 12px;
+  align-items: center;
+}
+.steps li::before {
+  content: counter(step);
+  grid-row: 1;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--mute);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.steps li.steps__done::before {
+  content: '✓';
+  background: var(--ink);
+  color: #fff;
+  box-shadow: none;
+}
+.steps .btn,
+.suspect__steps .btn {
+  justify-self: start;
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.25;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  overflow-wrap: anywhere;
+}
+.hero__title span {
+  display: block;
+}
+.steps__hint {
+  grid-column: 2;
+  font-size: 14px;
+  color: var(--ink-3);
+  line-height: 1.45;
+}
+
+.after {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+.after__row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px 16px;
+}
+.after__next {
+  color: var(--ink-3);
+}
+
+.verdict {
+  max-width: 52ch;
+  font-size: 18px;
+  font-weight: 600;
+}
+.verdict--ok {
+  color: var(--moss);
+}
+.verdict--warn {
+  color: var(--ink);
+}
+.verdict--bad {
+  color: var(--danger);
+}
+
+.notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  padding: 16px 20px;
+  border-radius: var(--r-block);
+  background: var(--paper);
+}
+.notice--bad {
+  box-shadow: inset 4px 0 0 var(--danger);
+}
+
+.zone__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.zone__count b {
+  font-family: var(--display);
+  font-size: 18px;
+  color: var(--ink);
+}
+.zone__rule {
+  margin-left: auto;
+  color: var(--ink-3);
+}
+
+/* công tắc */
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.switch input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.switch__ui {
+  position: relative;
+  width: 40px;
+  height: 24px;
+  border-radius: 12px;
+  background: var(--mute);
+  transition: background 0.2s;
+}
+.switch__ui::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.2s var(--ease);
+}
+.switch input:checked + .switch__ui {
+  background: var(--you);
+}
+.switch input:checked + .switch__ui::after {
+  transform: translateX(16px);
+}
+.switch input:focus-visible + .switch__ui {
+  outline: 3px solid var(--you);
+  outline-offset: 3px;
+}
+
+/* ============================================================
+   TRANG CHUNG
+   ============================================================ */
+.page {
+  max-width: 760px;
+}
+.page__head {
+  padding: 16px 0 28px;
+}
+.page__head h1 {
+  font-size: clamp(32px, 4vw, 44px);
+  margin-bottom: 10px;
+}
+.page__head p {
+  color: var(--ink-2);
+  max-width: 60ch;
+}
+
+.empty {
+  padding: 40px 28px;
+  border-radius: var(--r-block);
+  background: var(--paper);
+}
+.empty h2 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+.empty p {
+  color: var(--ink-2);
+  max-width: 52ch;
+}
+
+/* ---------- cảnh báo ---------- */
+.suspects {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.suspect {
+  padding: 24px;
+  border-radius: var(--r-block);
+  background: var(--paper);
+}
+.suspect__head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.suspect__name {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 22px;
+  font-variation-settings: 'wdth' 85;
+  line-height: 1.15;
+}
+.suspect__meta {
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.suspect__why {
+  margin: 16px 0 20px;
+  color: var(--ink-2);
+  max-width: 58ch;
+}
+.suspect__steps {
+  list-style: none;
+  counter-reset: step;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.suspect__steps li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 8px 12px;
+  align-items: start;
+}
+.suspect__steps li::before {
+  content: counter(step);
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-top: 6px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--mute);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.suspect__steps .btn,
+.suspect__steps .tt-choices,
+.suspect__steps .steps__hint {
+  grid-column: 2;
+}
+.suspect__steps .btn {
+  justify-self: start;
+}
+.suspect__q {
+  grid-column: 2;
+  padding-top: 8px;
+  font-weight: 600;
+}
+
+/* nút mô phỏng nút xám trên trang cá nhân TikTok */
+.tt-choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  max-width: 460px;
+}
+.tt-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: var(--r-small);
+  background: #ebecf1;
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow 0.15s, background 0.15s;
+}
+.tt-btn:hover:not(:disabled) {
+  box-shadow: inset 0 0 0 2px var(--ink);
+}
+.tt-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.tt-btn__label {
+  font-weight: 700;
+  font-size: 16px;
+}
+.tt-btn__mean {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.tt-btn--following:hover:not(:disabled) {
+  box-shadow: inset 0 0 0 2px var(--danger);
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + var(--tabbar-h));
+  z-index: 40;
+  max-width: min(92vw, 480px);
+  padding: 14px 20px;
+  border-radius: 16px;
+  background: var(--ink);
+  color: #fff;
+  font-weight: 500;
+  transform: translate(-50%, 20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s var(--ease);
+}
+.toast--show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ---------- điểm tin cậy ---------- */
+.trust {
+  max-width: 1000px;
+}
+.trust__hero {
+  display: flex;
+  align-items: flex-end;
+  gap: 24px 36px;
+  flex-wrap: wrap;
+  padding: 8px 0 28px;
+}
+.trust__score {
+  font-family: var(--display);
+  font-weight: 800;
+  font-variation-settings: 'wdth' 75;
+  font-size: clamp(112px, 17vw, 196px);
+  line-height: 0.78;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+}
+.trust__tier {
+  padding-bottom: 6px;
+  max-width: 40ch;
+}
+.trust__tier h1 {
+  font-size: clamp(28px, 3.2vw, 38px);
+  margin-bottom: 6px;
+}
+.trust__tier p {
+  color: var(--ink-2);
+}
+.trust__cols {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 40px;
+  margin-top: 48px;
+}
+.trust__cols h2 {
+  font-size: 22px;
+  margin-bottom: 14px;
+}
+.trust__note {
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--ink-2);
+  max-width: 56ch;
+}
+
+.rules {
+  width: 100%;
+  border-collapse: collapse;
+}
+.rules td {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.rules td:last-child {
+  width: 64px;
+  text-align: right;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 20px;
+  font-variation-settings: 'wdth' 80;
+}
+
+.ledger {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ledger li {
+  display: grid;
+  grid-template-columns: 1fr auto 52px;
+  align-items: baseline;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.ledger__when {
+  font-size: 13px;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.ledger__d {
+  text-align: right;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 18px;
+}
+
+/* thước điểm */
+.meter {
+  --tone: var(--moss);
+}
+.meter--warn {
+  --tone: var(--amber);
+}
+.meter--danger {
+  --tone: var(--danger);
+}
+.meter__track {
+  position: relative;
+  height: 14px;
+  border-radius: 7px;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.meter__fill {
+  height: 100%;
+  border-radius: 7px;
+  background: var(--tone);
+  transition: width 0.6s var(--ease);
+}
+.meter__tick {
+  position: absolute;
+  top: -5px;
+  bottom: -5px;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--ink);
+  opacity: 0.55;
+}
+.meter__labels {
+  position: relative;
+  height: 52px;
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.meter__labels span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  text-align: center;
+  line-height: 1.25;
+}
+.meter__labels span:nth-child(even) {
+  top: 26px;
+}
+.meter__labels b {
+  font-family: var(--display);
+  margin-right: 4px;
+  color: var(--ink);
+}
+.meter--compact .meter__track {
+  height: 8px;
+}
+
+/* ============================================================
+   LANDING
+   ============================================================ */
+.landing {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 48px);
+}
+.landing__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 76px;
+}
+.landing__login {
+  font-weight: 600;
+  text-decoration: none;
+  padding: 10px 18px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1.5px var(--mute);
+}
+.landing__login:hover {
+  box-shadow: inset 0 0 0 1.5px var(--ink);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  align-items: center;
+  gap: 48px;
+  padding: clamp(24px, 6vh, 72px) 0 clamp(56px, 10vh, 112px);
+}
+.hero__title {
+  font-size: clamp(44px, 6.4vw, 84px);
+  font-weight: 800;
+  font-variation-settings: 'wdth' 78;
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+  max-width: 12ch;
+}
+.hero__lead {
+  margin-top: 24px;
+  font-size: 18px;
+  color: var(--ink-2);
+  max-width: 46ch;
+}
+.hero__cta {
+  margin-top: 32px;
+}
+.hero__fine {
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--ink-3);
+  max-width: 44ch;
+}
+
+.demo {
+  margin: 0;
+}
+.stage--demo {
+  --seam: 56px;
+  min-height: 380px;
+}
+.stage--demo.stage--result-ok {
+  --seam: 0px;
+}
+.stage--demo .person__status {
+  font-size: 14px;
+}
+.demo figcaption {
+  margin-top: 14px;
+  font-size: 14px;
+  color: var(--ink-3);
+  text-align: center;
+}
+
+.how {
+  padding: 56px 0;
+  border-top: 1px solid var(--line);
+}
+.how h2 {
+  font-size: clamp(28px, 3.4vw, 40px);
+  max-width: 20ch;
+  margin-bottom: 36px;
+}
+.how__list {
+  list-style: none;
+  counter-reset: how;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 32px;
+}
+.how__list li {
+  counter-increment: how;
+}
+.how__list li::before {
+  content: counter(how);
+  display: block;
+  margin-bottom: 14px;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 56px;
+  font-variation-settings: 'wdth' 75;
+  line-height: 0.9;
+  color: var(--you);
+}
+.how__list li:nth-child(even)::before {
+  color: var(--them);
+}
+.how__list h3 {
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+.how__list p {
+  color: var(--ink-2);
+}
+
+.rules-teaser {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 40px;
+  align-items: center;
+  padding: clamp(28px, 4vw, 48px);
+  margin-bottom: 56px;
+  border-radius: var(--r-stage);
+  background: var(--paper);
+}
+.rules-teaser h2 {
+  font-size: clamp(26px, 3vw, 36px);
+  margin-bottom: 14px;
+}
+.rules-teaser p {
+  color: var(--ink-2);
+  max-width: 54ch;
+}
+.rules-teaser__nums {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+.rules-teaser__nums div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.rules-teaser__nums div:last-child {
+  border-bottom: 0;
+}
+.rules-teaser__nums dd {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 34px;
+  font-variation-settings: 'wdth' 78;
+  line-height: 1;
+}
+
+.landing__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  padding: 28px 0 40px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 960px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+  .how__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .rules-teaser,
+  .trust__cols {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  :root {
+    --tabbar-h: calc(64px + env(safe-area-inset-bottom));
+  }
+
+  .topbar {
+    height: 56px;
+  }
+  .topbar__nav {
+    display: none;
+  }
+
+  .tabbar {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 30;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    height: var(--tabbar-h);
+    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--paper);
+    box-shadow: 0 -1px 0 var(--line);
+  }
+  .tabbar__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-3);
+    text-decoration: none;
+  }
+  .tabbar__item.active {
+    color: var(--ink);
+  }
+  .tabbar__icon {
+    position: relative;
+  }
+  .tabbar__icon .badge {
+    position: absolute;
+    top: -6px;
+    right: -14px;
+  }
+
+  /* sân duet xếp dọc: bạn ở trên, đối phương ở dưới */
+  .stage {
+    --seam: 64px;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr var(--seam) 1fr;
+    min-height: 0;
+    transition: grid-template-rows 0.7s var(--ease);
+  }
+  .half {
+    padding: 20px 16px;
+    min-height: 168px;
+  }
+  .stage.stage--result-ok {
+    --seam: 0px;
+  }
+  /* chừa chỗ cho nhãn "Bạn bè" nằm trên đường nối */
+  .stage--result-ok .half--you {
+    padding-bottom: 36px;
+  }
+  .stage--result-ok .half--them {
+    padding-top: 40px;
+  }
+  .friends {
+    height: 42px;
+    font-size: 18px;
+  }
+  .stage--result-ok .half--you {
+    border-radius: var(--r-stage) var(--r-stage) 0 0;
+  }
+  .stage--result-ok .half--them {
+    border-radius: 0 0 var(--r-stage) var(--r-stage);
+  }
+  .stage .person {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      'av name'
+      'av handle'
+      'av meta'
+      'st st';
+    align-items: center;
+    column-gap: 14px;
+    width: 100%;
+    text-align: left;
+  }
+  .stage .person .avatar {
+    grid-area: av;
+    width: 64px !important;
+    height: 64px !important;
+    font-size: 24px !important;
+    margin: 0;
+  }
+  .person__name {
+    grid-area: name;
+    font-size: 22px;
+  }
+  .person__handle {
+    grid-area: handle;
+  }
+  .person__meta {
+    grid-area: meta;
+    justify-content: flex-start;
+    margin-top: 6px;
+  }
+  .person__status {
+    grid-area: st;
+    margin-top: 12px;
+  }
+  .countdown {
+    width: 58px;
+    height: 58px;
+  }
+  .countdown span {
+    font-size: 18px;
+  }
+  .countdown svg {
+    inset: 4px;
+  }
+
+  .steps {
+    grid-template-columns: 1fr;
+  }
+  .steps .btn {
+    justify-self: stretch;
+  }
+  .controls .btn--lg {
+    width: 100%;
+  }
+  .zone__rule {
+    margin-left: 0;
+  }
+
+  .stage--demo {
+    --seam: 40px;
+    min-height: 0;
+  }
+  .stage--demo .half {
+    min-height: 120px;
+  }
+
+  .how__list {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .how__list li {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    column-gap: 12px;
+  }
+  .how__list li::before {
+    grid-row: span 2;
+    font-size: 44px;
+    margin: 0;
+  }
+  .tt-choices {
+    grid-template-columns: 1fr;
+  }
+  .hero__cta .btn {
+    width: 100%;
+  }
+  .suspect {
+    padding: 20px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
