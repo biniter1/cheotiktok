@@ -20,6 +20,19 @@
 		}
 	}
 
+	# File xác minh domain (TikTok URL prefix...): thả file vào thư mục verify/ trên máy, không cần build lại
+	@verify {
+		not path /
+		file {
+			root /srv/verify
+			try_files {path}
+		}
+	}
+	handle @verify {
+		root * /srv/verify
+		file_server
+	}
+
 	handle {
 		root * /srv/web
 		@assets path /assets/*

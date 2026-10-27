@@ -11,4 +11,4 @@ dist-demo/
 
 .DS_Store
 .vercel
-KLTN_key.pem
+*.pem 

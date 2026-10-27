@@ -81,6 +81,7 @@ services:
     volumes:
       - caddy_data:/data
       - caddy_config:/config
+      - ../verify:/srv/verify:ro
     depends_on: [api]
     restart: always
 
