@@ -41,7 +41,9 @@ export function toPublic(u: UserRow): PublicProfile {
     displayName: u.display_name,
     username: u.username,
     avatarUrl: u.avatar_url,
-    profileUrl: u.profile_url ?? (u.username ? `https://www.tiktok.com/@${u.username}` : null),
+    // Ưu tiên link dựng từ username: profile_web_link của API có thể là link chia sẻ dạng
+    // /share/user/<id> mà app TikTok không mở được (gặp thực tế ở sandbox)
+    profileUrl: u.username ? `https://www.tiktok.com/@${encodeURIComponent(u.username)}` : u.profile_url,
     trustScore: u.trust_score,
     tier: tierOf(u.trust_score),
     warning: u.warning,
