@@ -49,6 +49,10 @@ Node.js 22 · TypeScript · Fastify · Socket.IO · PostgreSQL · Redis · BullM
 
 ## Chạy
 
+### Deploy lên server thật (1 máy)
+Xem **[DEPLOY.md](DEPLOY.md)**: `sudo bash deploy/setup-vm.sh` một lần, sau đó `bash deploy/deploy.sh`.
+Hồ sơ xin duyệt TikTok: **[TIKTOK_REVIEW.md](TIKTOK_REVIEW.md)**.
+
 ### Dev / test nhanh (Docker Compose)
 ```bash
 cp .env.example .env            # giữ TIKTOK_MOCK=1 để chạy không cần TikTok thật

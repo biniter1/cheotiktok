@@ -11,10 +11,18 @@ export interface PublicProfile {
   warning: boolean;
 }
 
+export interface FollowerStats {
+  followerCount: number;
+  followingCount: number;
+  followerDelta7d: number;
+  statsTakenAt: string;
+}
+
 export interface Me extends PublicProfile {
   status: 'active' | 'suspended' | 'banned';
   bannedUntil: string | null;
   trackingOk: boolean;
+  stats: FollowerStats | null;
 }
 
 export interface LedgerEntry {
@@ -79,6 +87,7 @@ export interface Backend {
   confirmSuspicion(id: number): Promise<void>;
   dismissSuspicion(id: number): Promise<void>;
   logout(): Promise<void>;
+  deleteAccount(): Promise<void>;
   loginUrl: string;
   /** Chỉ dùng trên server chạy thử: giả lập hành động bấm Follow trên TikTok */
   fakeFollow(targetUserId: number): Promise<void>;

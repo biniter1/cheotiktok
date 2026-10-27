@@ -2,6 +2,7 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { isFakeFollow } from '../lib/backend';
 import { useMe } from '../state/me';
 import { Avatar } from './Avatar';
+import { Footer } from './Footer';
 import { Logo } from './Logo';
 
 const NAV = [
@@ -48,6 +49,7 @@ export function Shell() {
 
       <main className="shell__main">
         <Outlet />
+        <Footer compact />
       </main>
 
       <nav className="tabbar" aria-label="Chính">

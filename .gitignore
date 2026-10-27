@@ -1,12 +1,14 @@
-# ignore build output and dependencies
 node_modules/
 dist/
 dist-demo/
 *.log
+
+# secret: KHÔNG commit, chỉ commit .env.example
 .env
 .env.*
 !.env.example
 !web/.env.mock
+
 .DS_Store
 .vercel
 KLTN_key.pem

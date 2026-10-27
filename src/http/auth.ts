@@ -6,6 +6,7 @@ import { redis } from '../lib/redis.js';
 import { SESSION_COOKIE, SESSION_MAX_AGE, signSession, verifySession } from '../lib/session.js';
 import { authorizeUrl, exchangeCode, fetchProfile, type TokenSet } from '../tiktok/client.js';
 import { saveTokens } from '../tiktok/tokens.js';
+import { applyDeletedHistory } from '../domain/account.js';
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -33,10 +34,12 @@ async function upsertFromTokens(tokens: TokenSet): Promise<{ id: number; status:
          display_name = excluded.display_name, username = excluded.username,
          avatar_url = excluded.avatar_url, profile_url = excluded.profile_url,
          tracking_ok = true, last_seen_at = now()
-       returning id, status`,
+       returning id, status, (xmax = 0) as inserted`,
       [p.openId, p.displayName, p.username, p.avatarUrl, p.profileUrl],
     );
     const user = rows[0];
+    // người từng xoá tài khoản quay lại: không được "rửa" điểm tin cậy
+    if (user.inserted) await applyDeletedHistory(c, user.id, p.openId);
     await saveTokens(c, user.id, tokens);
     await c.query(
       'insert into stat_snapshots (user_id, follower_count, following_count) values ($1, $2, $3)',

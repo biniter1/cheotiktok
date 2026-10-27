@@ -143,6 +143,8 @@ export async function retentionBonuses(): Promise<void> {
       await tx((c) => applyTrust(c, r.follower_id, reason));
     }
   }
+  // Giới hạn lưu trữ cam kết trong Privacy Policy: số liệu follower chỉ giữ 90 ngày
+  await pool.query(`delete from stat_snapshots where taken_at < now() - interval '90 days'`);
   // nghi vấn treo quá 7 ngày không ai xác nhận -> hết hạn
   await pool.query(
     `update suspicions set status = 'expired', resolved_at = now()

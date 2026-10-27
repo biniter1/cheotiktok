@@ -4,6 +4,7 @@ import { Shell } from './components/Shell';
 import { isMock } from './lib/backend';
 import { Alerts } from './pages/Alerts';
 import { Landing } from './pages/Landing';
+import { Legal } from './pages/Legal';
 import { Trust } from './pages/Trust';
 import { Zone } from './pages/Zone';
 import { MeProvider, useMe } from './state/me';
@@ -24,6 +25,8 @@ export function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Landing />} />
+          <Route path="/privacy" element={<Legal kind="privacy" />} />
+          <Route path="/terms" element={<Legal kind="terms" />} />
           <Route
             element={
               <RequireLogin>

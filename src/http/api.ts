@@ -4,6 +4,8 @@ import { pool } from '../lib/db.js';
 import { AppError } from '../lib/errors.js';
 import { confirmSuspicion, createAppeal, dismissSuspicion, manualReport, resolveAppeal } from '../domain/moderation.js';
 import { getPublicProfiles, getUser, toPublic } from '../domain/users.js';
+import { deleteAccount, followerStats } from '../domain/account.js';
+import { SESSION_COOKIE } from '../lib/session.js';
 import { mockFollow } from '../tiktok/client.js';
 import { authenticate } from './auth.js';
 
@@ -24,7 +26,21 @@ export function registerApi(app: FastifyInstance): void {
 
     r.get('/me', async (req) => {
       const u = await getUser(req.uid);
-      return { ...toPublic(u), status: u.status, bannedUntil: u.banned_until, trackingOk: u.tracking_ok };
+      if (u.open_id.startsWith('deleted_')) throw new AppError('UNAUTHORIZED', 401);
+      return {
+        ...toPublic(u),
+        status: u.status,
+        bannedUntil: u.banned_until,
+        trackingOk: u.tracking_ok,
+        stats: await followerStats(req.uid),
+      };
+    });
+
+    // Người dùng tự xoá tài khoản và dữ liệu (cam kết trong Privacy Policy)
+    r.post('/me/delete', async (req, reply) => {
+      await deleteAccount(req.uid);
+      reply.clearCookie(SESSION_COOKIE, { path: '/' });
+      return { ok: true };
     });
 
     r.get('/me/ledger', async (req) => {

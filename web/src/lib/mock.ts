@@ -51,6 +51,7 @@ let me: Me = {
   status: 'active',
   bannedUntil: null,
   trackingOk: true,
+  stats: { followerCount: 846, followingCount: 912, followerDelta7d: 37, statsTakenAt: ago(9) },
 };
 
 const ledger: LedgerEntry[] = [
@@ -109,6 +110,7 @@ export const mockBackend: Backend = {
     suspicions = suspicions.filter((s) => s.id !== id);
   },
   logout: async () => {},
+  deleteAccount: async () => {},
   fakeFollow: async () => {},
   zone: {
     connect() {},

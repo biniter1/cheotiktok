@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { Avatar } from '../components/Avatar';
+import { Footer } from '../components/Footer';
 import { Logo } from '../components/Logo';
 import { backend, isMock } from '../lib/backend';
 import { useMe } from '../state/me';
@@ -130,10 +131,7 @@ export function Landing() {
         </dl>
       </section>
 
-      <footer className="landing__foot">
-        <Logo size={20} />
-        <span>Chéo không liên kết với TikTok. TikTok là thương hiệu của ByteDance.</span>
-      </footer>
+      <Footer />
     </div>
   );
 }
