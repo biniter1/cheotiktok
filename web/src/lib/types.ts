@@ -53,6 +53,8 @@ export interface MatchResult {
   matchId: number;
   status: MatchStatus;
   youFollowed: boolean;
+  /** mình đã bấm "Mình đã follow" (dùng để báo đúng mức trừ điểm) */
+  youConfirmed?: boolean;
   partnerFollowed: boolean;
   hint?: string;
 }

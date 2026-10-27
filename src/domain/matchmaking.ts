@@ -209,11 +209,20 @@ export async function verifyMatch(matchId: number): Promise<void> {
   });
 
   await redis.del(`mm:state:${m.user_a}`, `mm:state:${m.user_b}`);
+  if (status === 'expired') {
+    // không ai làm gì (vd cả hai bỏ đi) -> chưa tính là "đã gặp", lần sau được ghép lại
+    await redis
+      .multi()
+      .srem(`mm:seen:${m.user_a}`, String(m.user_b))
+      .srem(`mm:seen:${m.user_b}`, String(m.user_a))
+      .exec();
+  }
   for (const s of sides) {
     notify(s.uid, 'match:result', {
       matchId,
       status,
       youFollowed: s.followed,
+      youConfirmed: s.confirmed,
       partnerFollowed: s.otherFollowed,
       // đối phương không follow lại -> gợi ý user tự unfollow lại cho công bằng
       hint: s.followed && !s.otherFollowed ? 'PARTNER_DID_NOT_FOLLOW_BACK' : undefined,

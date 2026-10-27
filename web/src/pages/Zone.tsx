@@ -41,7 +41,7 @@ function youStatus(phase: Phase): string {
 }
 
 function ResultLine({ phase }: { phase: Extract<Phase, { k: 'result' }> }) {
-  const { status, youFollowed } = phase.result;
+  const { status, youFollowed, youConfirmed, partnerFollowed } = phase.result;
   const who = handle(phase.partner);
   if (status === 'ok') return <p className="verdict verdict--ok">Hai bạn đã follow nhau. Bạn được cộng 1 điểm.</p>;
   if (status === 'expired') return <p className="verdict">Hết giờ, chưa ai follow. Không ai bị trừ điểm.</p>;
@@ -51,7 +51,16 @@ function ResultLine({ phase }: { phase: Extract<Phase, { k: 'result' }> }) {
         {who} không follow lại và đã bị trừ điểm. Bạn có thể bỏ follow họ, việc này không ảnh hưởng điểm của bạn.
       </p>
     );
-  return <p className="verdict verdict--bad">Bạn chưa follow lại {who} nên bị trừ 2 điểm.</p>;
+  // khớp đúng luật trừ điểm ở backend (FAKE_CONFIRM -5, NO_FOLLOW -2)
+  if (youConfirmed)
+    return (
+      <p className="verdict verdict--bad">
+        Bạn đã bấm “Mình đã follow” nhưng TikTok chưa ghi nhận lượt follow {who}, nên bị trừ 5 điểm. Lần sau hãy
+        tải lại trang TikTok của họ để chắc nút vẫn là “Đã follow” rồi mới xác nhận.
+      </p>
+    );
+  if (partnerFollowed) return <p className="verdict verdict--bad">Bạn chưa follow lại {who} nên bị trừ 2 điểm.</p>;
+  return <p className="verdict">Cả hai chưa follow nhau. Bạn không bị trừ điểm.</p>;
 }
 
 export function Zone() {
@@ -150,7 +159,7 @@ export function Zone() {
               <span className="steps__hint">
                 {isFakeFollow
                   ? 'Bản chạy thử: nút này thay cho thao tác bấm Follow trên TikTok.'
-                  : 'Bấm Follow trên trang của họ rồi quay lại đây.'}
+                  : 'Bấm Follow, rồi tải lại trang của họ để chắc nút vẫn là “Đã follow” (TikTok đôi khi không lưu lượt follow).'}
               </span>
             </li>
             <li>

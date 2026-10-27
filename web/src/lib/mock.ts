@@ -91,6 +91,7 @@ async function resolve() {
     matchId: m.matchId,
     status,
     youFollowed,
+    youConfirmed: m.iConfirmed,
     partnerFollowed: m.partnerFollows,
     hint: youFollowed && !m.partnerFollows ? 'PARTNER_DID_NOT_FOLLOW_BACK' : undefined,
   });
