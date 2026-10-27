@@ -109,6 +109,7 @@ export const mockBackend: Backend = {
     suspicions = suspicions.filter((s) => s.id !== id);
   },
   logout: async () => {},
+  fakeFollow: async () => {},
   zone: {
     connect() {},
     disconnect() {},

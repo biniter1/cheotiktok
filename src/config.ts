@@ -13,7 +13,7 @@ export const config = {
   /** 32 byte key, base64 — dùng để mã hoá access/refresh token TikTok trong DB */
   tokenEncKey: env('TOKEN_ENC_KEY'),
   frontendUrl: env('FRONTEND_URL', 'http://localhost:5173'),
-  /** TIKTOK_MOCK=1: giả lập TikTok API để dev và load test, KHÔNG bật ở production */
+  /** TIKTOK_MOCK=1: giả lập TikTok API để dev, load test, hoặc server chạy thử */
   tiktokMock: process.env.TIKTOK_MOCK === '1',
   tiktok: {
     clientKey: process.env.TIKTOK_CLIENT_KEY ?? '',
@@ -36,6 +36,7 @@ export const config = {
 if (!config.tiktokMock && (!config.tiktok.clientKey || !config.tiktok.clientSecret || !config.tiktok.redirectUri)) {
   throw new Error('Missing TIKTOK_CLIENT_KEY / TIKTOK_CLIENT_SECRET / TIKTOK_REDIRECT_URI (or set TIKTOK_MOCK=1 for dev)');
 }
-if (config.tiktokMock && config.isProd) {
-  throw new Error('TIKTOK_MOCK must not be enabled in production');
+// Server chạy thử (staging) được phép mock, nhưng phải bật cờ riêng một cách có chủ đích
+if (config.tiktokMock && config.isProd && process.env.ALLOW_MOCK_IN_PROD !== '1') {
+  throw new Error('TIKTOK_MOCK in production requires ALLOW_MOCK_IN_PROD=1 (staging only)');
 }

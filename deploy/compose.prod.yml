@@ -1,0 +1,91 @@
+# Chạy toàn bộ trên 1 máy. Dùng qua deploy/deploy.sh (tự tạo .env.prod lần đầu).
+#   docker compose -f deploy/compose.prod.yml --env-file .env.prod up -d --build
+# Scale API: thêm API_REPLICAS=3 vào .env.prod rồi chạy lại deploy.sh
+name: cheo
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: cheo
+      POSTGRES_PASSWORD: ${PG_PASSWORD:?thiếu PG_PASSWORD}
+      POSTGRES_DB: cheo
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cheo -d cheo"]
+      interval: 5s
+      retries: 20
+    restart: always
+
+  redis:
+    image: redis:7-alpine
+    # BullMQ yêu cầu noeviction; appendonly để không mất hàng đợi khi khởi động lại
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
+    volumes: [redisdata:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 20
+    restart: always
+
+  api:
+    image: cheo-backend:latest
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    env_file: ../.env.prod
+    deploy:
+      replicas: ${API_REPLICAS:-2}
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/readyz"]
+      interval: 10s
+      retries: 3
+    restart: always
+    stop_grace_period: 20s
+
+  migrate:
+    image: cheo-backend:latest
+    pull_policy: never
+    env_file: ../.env.prod
+    command: ["node", "dist/migrate.js"]
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: "no"
+
+  worker:
+    image: cheo-backend:latest
+    pull_policy: never
+    env_file: ../.env.prod
+    command: ["node", "dist/worker.js"]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+    restart: always
+    stop_grace_period: 60s
+
+  caddy:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.web
+      args:
+        VITE_FAKE_FOLLOW: ${VITE_FAKE_FOLLOW:-0}
+    environment:
+      DOMAIN: ${DOMAIN:?thiếu DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [api]
+    restart: always
+
+volumes:
+  pgdata:
+  redisdata:
+  caddy_data:
+  caddy_config:

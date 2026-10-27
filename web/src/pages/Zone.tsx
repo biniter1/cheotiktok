@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Avatar } from '../components/Avatar';
 import { Countdown } from '../components/Countdown';
-import { backend } from '../lib/backend';
+import { backend, isFakeFollow } from '../lib/backend';
 import { errorText, handle, TIER } from '../lib/copy';
 import type { Me, PublicProfile } from '../lib/types';
 import { useMe } from '../state/me';
@@ -125,16 +125,33 @@ export function Zone() {
         {phase.k === 'matched' && (
           <ol className="steps">
             <li className={phase.opened ? 'steps__done' : ''}>
-              <a
-                className="btn btn--them"
-                href={phase.match.partner.profileUrl ?? '#'}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={markOpened}
-              >
-                Mở TikTok của {handle(phase.match.partner)}
-              </a>
-              <span className="steps__hint">Bấm Follow trên trang của họ rồi quay lại đây.</span>
+              {isFakeFollow ? (
+                <button
+                  className="btn btn--them"
+                  disabled={phase.opened}
+                  onClick={() => {
+                    const id = phase.match.partner.id;
+                    void backend.fakeFollow(id).then(markOpened);
+                  }}
+                >
+                  {phase.opened ? 'Đã follow (giả lập)' : `Follow ${handle(phase.match.partner)} (giả lập)`}
+                </button>
+              ) : (
+                <a
+                  className="btn btn--them"
+                  href={phase.match.partner.profileUrl ?? '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={markOpened}
+                >
+                  Mở TikTok của {handle(phase.match.partner)}
+                </a>
+              )}
+              <span className="steps__hint">
+                {isFakeFollow
+                  ? 'Bản chạy thử: nút này thay cho thao tác bấm Follow trên TikTok.'
+                  : 'Bấm Follow trên trang của họ rồi quay lại đây.'}
+              </span>
             </li>
             <li>
               <button

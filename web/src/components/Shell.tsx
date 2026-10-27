@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import { isFakeFollow } from '../lib/backend';
 import { useMe } from '../state/me';
 import { Avatar } from './Avatar';
 import { Logo } from './Logo';
@@ -18,6 +19,11 @@ export function Shell() {
   const { me, alertCount } = useMe();
   return (
     <div className="shell">
+      {isFakeFollow && (
+        <div className="staging-bar" role="note">
+          Bản chạy thử: tài khoản và lượt follow đều là giả lập. Mở thêm một trình duyệt khác để có người ghép cặp.
+        </div>
+      )}
       <header className="topbar">
         <NavLink to="/zone" className="topbar__brand" aria-label="Chéo — về Zone">
           <Logo size={24} />

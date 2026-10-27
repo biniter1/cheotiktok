@@ -9,3 +9,4 @@ dist-demo/
 !web/.env.mock
 .DS_Store
 .vercel
+KLTN_key.pem

@@ -1,0 +1,30 @@
+# Một domain phục vụ cả frontend (file tĩnh) và API -> cookie đăng nhập luôn cùng origin.
+# Caddy tự xin và gia hạn chứng chỉ HTTPS cho {$DOMAIN}.
+
+{$DOMAIN} {
+	encode zstd gzip
+
+	@api path /auth/* /me /me/* /suspicions/* /reports /reports/* /appeals /appeals/* /users/* /admin/* /dev/* /socket.io/* /healthz /readyz
+	handle @api {
+		reverse_proxy {
+			# hỏi Docker DNS mỗi 10s -> scale api lên/xuống là Caddy tự thấy bản mới
+			dynamic a {
+				name {$API_HOST:api}
+				port {$API_PORT:3000}
+				refresh 10s
+			}
+			lb_policy least_conn
+			# bản api nào lỗi kết nối thì tạm loại 10s và thử bản khác (health check thụ động)
+			lb_try_duration 5s
+			fail_duration 10s
+		}
+	}
+
+	handle {
+		root * /srv/web
+		@assets path /assets/*
+		header @assets Cache-Control "public, max-age=31536000, immutable"
+		try_files {path} /index.html
+		file_server
+	}
+}

@@ -48,6 +48,7 @@ export const realBackend: Backend = {
   confirmSuspicion: async (id) => void (await call('POST', `/suspicions/${id}/confirm`)),
   dismissSuspicion: async (id) => void (await call('POST', `/suspicions/${id}/dismiss`)),
   logout: async () => void (await call('POST', '/auth/logout')),
+  fakeFollow: async (targetUserId) => void (await call('POST', '/dev/mock-follow', { targetUserId, dir: 1 })),
   zone: {
     connect() {
       const s = getSocket();

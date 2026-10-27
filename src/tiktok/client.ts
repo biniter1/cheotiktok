@@ -127,7 +127,7 @@ async function mockProfile(accessToken: string): Promise<Profile> {
   const s = await redis.hgetall(key);
   return {
     openId,
-    displayName: `Mock ${openId}`,
+    displayName: `Người thử ${openId.replace(/^thu_/, '').slice(-6)}`,
     username: openId,
     avatarUrl: null,
     profileUrl: `https://www.tiktok.com/@${openId}`,

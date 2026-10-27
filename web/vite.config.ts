@@ -11,7 +11,8 @@ const singleFile = process.env.SINGLE_FILE === '1';
 
 export default defineConfig({
   plugins: [react(), ...(singleFile ? [viteSingleFile()] : [])],
-  base: './',
+  // đường dẫn tuyệt đối cho bản thật (router dạng /zone, /canh-bao); bản 1 file thì tương đối
+  base: singleFile ? './' : '/',
   build: singleFile ? { assetsInlineLimit: 100_000_000, outDir: 'dist-demo' } : undefined,
   server: {
     port: 5173,

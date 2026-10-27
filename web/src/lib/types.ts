@@ -80,6 +80,8 @@ export interface Backend {
   dismissSuspicion(id: number): Promise<void>;
   logout(): Promise<void>;
   loginUrl: string;
+  /** Chỉ dùng trên server chạy thử: giả lập hành động bấm Follow trên TikTok */
+  fakeFollow(targetUserId: number): Promise<void>;
   zone: {
     connect(): void;
     disconnect(): void;

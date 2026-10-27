@@ -59,7 +59,16 @@ function setSession(reply: FastifyReply, userId: number): void {
 export function registerAuth(app: FastifyInstance): void {
   app.decorateRequest('uid', 0);
 
-  app.get('/auth/tiktok', async (_req, reply) => {
+  app.get('/auth/tiktok', async (req, reply) => {
+    if (config.tiktokMock) {
+      // Chạy thử: mỗi trình duyệt bấm đăng nhập = một người dùng thử mới (hoặc ?as=ten để đăng nhập lại)
+      const as = (req.query as { as?: string }).as;
+      const openId = as && /^[a-z0-9_]{1,40}$/i.test(as) ? as : `thu_${crypto.randomBytes(3).toString('hex')}`;
+      const user = await upsertFromTokens(await exchangeCode(openId));
+      if (user.status === 'banned') return reply.redirect(`${config.frontendUrl}/login?error=banned`);
+      setSession(reply, user.id);
+      return reply.redirect(`${config.frontendUrl}/zone`);
+    }
     const state = crypto.randomBytes(16).toString('hex');
     await redis.set(`oauth:state:${state}`, '1', 'EX', 600);
     return reply.redirect(authorizeUrl(state));
